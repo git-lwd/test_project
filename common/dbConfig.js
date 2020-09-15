@@ -26,3 +26,64 @@ try {
 }
 
 module.exports = sequelize;
+
+
+// exports.defineModel = function (name, attributes) {
+//     var attrs = {};
+
+//     //统一Id
+//     attrs.id = {
+//         type: Sequelize.STRING(50),
+//         primaryKey: true,
+//         allowNull: false,
+//         unique: true,
+//     };
+
+//     for (let key in attributes) {
+//         let val = attributes[key];
+//         if (typeof val === 'object' && val['type']) {
+//             val.allowNull = val.allowNull || false;
+//             attrs[key] = val;
+//         } else {
+//             attrs[key] = {
+//                 type: val,
+//                 allowNull: false
+//             };
+//         }
+//     }
+//     attrs.createdAt = {
+//         type: Sequelize.BIGINT,
+//         allowNull: false
+//     };
+
+//     attrs.updatedAt = {
+//         type: Sequelize.BIGINT,
+//         allowNull: false
+//     };
+
+//     attrs.version = {
+//         type: Sequelize.BIGINT
+//     }
+
+//     return sequelize.define(name, attrs, {
+//         tableName: name,
+//         timestamps: true,
+//         underscored: true,
+//         paranoid: true,
+//         hooks: {
+//             beforeValidate: function (obj) {
+//                 let now = Date.now();
+//                 if (obj.isNewRecord) {
+//                     obj.id = uuId.v4().replace(/-/g, '');
+//                     obj.version = 0;
+//                     obj.createdAt = now;
+//                     obj.updatedAt = now;
+//                 } else {
+//                     obj.version = obj.version + 1;
+//                     obj.updatedAt = Date.now();
+//                 }
+//             }
+//         }
+//     })
+
+// }

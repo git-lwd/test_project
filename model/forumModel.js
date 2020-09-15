@@ -12,26 +12,6 @@ class ForumModel extends BaseModel {
             pic: DataTypes.STRING(255),
             content: DataTypes.TEXT(),
             author: DataTypes.STRING(32),
-            typeId: {
-                type: DataTypes.INTEGER(11),
-                allowNull: false,
-                references: {
-                    // 引用的另外一个模型
-                    model: categoryModel,
-                    // 引用另外一个模型的属性
-                    key: 'id',
-                }
-            },
-            userId: {
-                type: DataTypes.UUID(),
-                allowNull: false,
-                references: {
-                    // 引用的另外一个模型
-                    model: userModel,
-                    // 引用另外一个模型的属性
-                    key: 'id',
-                }
-            },
             browse: DataTypes.INTEGER(10),
             praise: DataTypes.INTEGER(10),
             isAudit: {
@@ -48,8 +28,10 @@ class ForumModel extends BaseModel {
             tableName: 'forum'
         })
         this.model = super.getModel()
-        // this.model.sync() //模型同步数据库
-        this.model.sync({ force: true }) //强制同步，删除表格重建
+        this.model.belongsTo(categoryModel['model'], {as:'category', foreignKey:'typeId'})
+        this.model.belongsTo(userModel['model'], {as:'user', foreignKey:'userId'})
+        this.model.sync() //模型同步数据库
+        // this.model.sync({ force: true }) //强制同步，删除表格重建
     }
 }
 

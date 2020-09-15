@@ -2,9 +2,10 @@ const router = require('koa-router')()
 const forumService = require('../service/forumService')
 class ForumRoutes {
   static initRoutes() {
-    router.prefix('/users')
+    router.prefix('/forum')
 
     router.get('/findAll', async (ctx, next) => {
+      let query = ctx.query;
       try {
         var data = await forumService.BaseFindAndCountAll()
         ctx.body = {
