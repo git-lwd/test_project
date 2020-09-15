@@ -19,18 +19,17 @@ app.use(views(__dirname + '/views', {
   extension: 'ejs'
 }))
 // 全局拦截配置CROS，允许跨域访问
-app.all('*', async (ctx, next) => {
-  res.header('Access-Control-Allow-origin', '*')
-  res.header('Access-Control-Allow-Headers', 'accept, origin, X-Requested-With, content-type, token')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  res.header('Content-Type', 'application/json;charset=utf-8')
-  res.header('Access-Control-Allow-Credentials', 'true')
+app.use(async (ctx, next) => {
+  ctx.set('Access-Control-Allow-Origin', '*');
+  ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , token');
+  ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   if (ctx.method == 'OPTIONS') {
     ctx.body = 200;
   } else {
     await next();
   }
-})
+});
+
 // 日志logger
 app.use(async (ctx, next) => {
   const start = new Date()

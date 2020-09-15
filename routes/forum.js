@@ -1,12 +1,12 @@
 const router = require('koa-router')()
-const userService = require('../service/userService')
-class UserRoutes {
+const forumService = require('../service/forumService')
+class ForumRoutes {
   static initRoutes() {
     router.prefix('/users')
 
     router.get('/findAll', async (ctx, next) => {
       try {
-        var data = await userService.BaseFindAndCountAll()
+        var data = await forumService.BaseFindAndCountAll()
         ctx.body = {
           code: 0,
           data,
@@ -19,7 +19,7 @@ class UserRoutes {
 
     router.get('/findById', async (ctx, next) => {
       try {
-        var data = await userService.BaseFindByPk(ctx.query.id)
+        var data = await forumService.BaseFindByPk(ctx.query.id)
         if (data) {
           ctx.body = {
             code: 0,
@@ -27,7 +27,7 @@ class UserRoutes {
             message: '操作成功'
           };
         } else {
-          ctx.throw(405, '用户不存在');
+          ctx.throw(405, '帖子不存在');
         }
       } catch (error) {
         ctx.throw(500, error);
@@ -37,7 +37,7 @@ class UserRoutes {
     router.post('/create', async (ctx, next) => {
       let opts = ctx.request.body;
       try {
-        let data = await userService.BaseCreate(opts)
+        let data = await forumService.BaseCreate(opts)
         ctx.body = {
           code: 0,
           data: data,
@@ -52,10 +52,10 @@ class UserRoutes {
       let opts = ctx.request.body;
       try {
         if (!opts.id) {
-          ctx.throw(405, '用户id不能为空')
+          ctx.throw(405, '帖子id不能为空')
           return;
         }
-        let data = await userService.BaseUpdate(opts, { id: opts.id })
+        let data = await forumService.BaseUpdate(opts, { id: opts.id })
         if(data[0]){
           ctx.body = {
             code: 0,
@@ -77,10 +77,10 @@ class UserRoutes {
       let opts = ctx.request.body;
       try {
         if (!opts.id) {
-          ctx.throw(405, '用户id不能为空')
+          ctx.throw(405, '帖子id不能为空')
           return
         }
-        let data = await userService.BaseDelete({ id: opts.id })
+        let data = await forumService.BaseDelete({ id: opts.id })
         if(data){
           ctx.body = {
             code: 0,
@@ -104,4 +104,4 @@ class UserRoutes {
 }
 
 
-module.exports = UserRoutes.initRoutes()
+module.exports = ForumRoutes.initRoutes()

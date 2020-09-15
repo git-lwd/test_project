@@ -1,68 +1,42 @@
 
-const sequelize = require('../common/dbConfig')
 const { DataTypes } = require("sequelize"); // 导入内置数据类型
+const BaseModel = require('./baseModel')
 
-const User = sequelize.define('user', {
-    id: {
-        primaryKey: true,
-        allowNull: false,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV1,
-        set(val) {
-            return val.replace(/\-/g, '')
-        }
-    },
-    name: DataTypes.STRING(16),
-    age: DataTypes.INTEGER(4),
-    gender: DataTypes.BOOLEAN,
-    birthday: DataTypes.DATE,
-    isSuper: {
-        type: DataTypes.INTEGER(1),
-        defaultValue: 0,
-        allowNull: false
-    }
-}, {
-    tableName: 'user'
-});
-
-// User.sync({ force: true })
-
-class UserModel {
-    create(opts) {
-        return User.create(opts)
-    }
-
-    findAll(opts,attributes) {
-        return User.findAll(opts)
-    }
-
-    findById(opts) {
-        return User.findById(opts)
-    }
-
-    update(opts) {
-        return User.update(opts)
-    }
-
-    delete(opts) {
-        return User.destroy(opts)
+class UserModel extends BaseModel{
+    constructor(){
+        super('user', {
+            id: {
+                primaryKey: true,
+                allowNull: false,
+                unique: true,
+                type: DataTypes.UUID,
+                defaultValue: DataTypes.UUIDV1,
+            },
+            pic:DataTypes.STRING(255),
+            phone:DataTypes.STRING(11),
+            password:DataTypes.STRING(32),
+            name: DataTypes.STRING(16),
+            age: DataTypes.INTEGER(4),
+            gender: DataTypes.INTEGER(1),
+            birthday: DataTypes.DATEONLY,
+            isSuper: {
+                type: DataTypes.INTEGER(1),
+                defaultValue: 0,
+                allowNull: false
+            },
+            isdel: {
+                type: DataTypes.INTEGER(1),
+                defaultValue: 0,
+                allowNull: false
+            }
+        }, {
+            tableName: 'user'
+        })
+        this.model = super.getModel()
+        this.model.sync() //模型同步数据库
+        // this.model.sync({ force: true }) //强制同步，删除表格重建
     }
 }
 
-var uObj = new UserModel();
-// uObj.create({
-//     name: '萌白酱',
-//     age: '22',
-//     gender: 1,
-//     birthday: '2000-10-10',
-// })
 
-(async function () {
-    try {
-        var data = await uObj.findAll()
-        console.log(data)
-    } catch (error) {
-        console.log('err', error)
-    }
-})()
-
+module.exports = new UserModel()
