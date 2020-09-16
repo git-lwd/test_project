@@ -1,41 +1,34 @@
 
 const { DataTypes } = require("sequelize"); // 导入内置数据类型
 const BaseModel = require('./baseModel')
-
-class UserModel extends BaseModel{
-    constructor(){
+const crypto = require('crypto')
+class UserModel extends BaseModel {
+    constructor() {
         super('user', {
-            id: {
-                primaryKey: true,
-                allowNull: false,
-                unique: true,
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV1,
+            name: { type: DataTypes.STRING(16), unique: true },
+            pic: DataTypes.STRING(255),
+            phone: DataTypes.STRING(11),
+            password: {
+                type: DataTypes.STRING(32),
+                set(value) {
+                    this.setDataValue('password', crypto.createHash('md5').update(value).digest('hex'));
+                }
             },
-            pic:DataTypes.STRING(255),
-            phone:DataTypes.STRING(11),
-            password:DataTypes.STRING(32),
-            name: DataTypes.STRING(16),
-            age: DataTypes.INTEGER(4),
-            gender: DataTypes.INTEGER(1),
-            birthday: DataTypes.DATEONLY,
+            age: { type: DataTypes.INTEGER(4), allowNull: true },
+            gender: { type: DataTypes.INTEGER(1), allowNull: true },
+            birthday: { type: DataTypes.DATEONLY, allowNull: true },
             isSuper: {
                 type: DataTypes.INTEGER(1),
-                defaultValue: 0,
-                allowNull: false
+                defaultValue: 0
             },
             isdel: {
                 type: DataTypes.INTEGER(1),
-                defaultValue: 0,
-                allowNull: false
+                defaultValue: 0
             }
-        }, {
-            tableName: 'user'
         })
         this.model = super.getModel()
-        this.model.sync() //模型同步数据库
-        // this.model.sync({ force: true }) //强制同步，删除表格重建
     }
+
 }
 
 

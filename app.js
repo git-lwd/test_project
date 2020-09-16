@@ -6,18 +6,24 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const router = require('./routes/router')
+const koajwt = require('koa-jwt')
+const SECRET = 'lwd';
 
 onerror(app)//添加报错监听器
-//post请求处理中间件middlewares
+
+//post请求处理
 app.use(bodyparser({
   enableTypes: ['json', 'form', 'text']
 }))
 app.use(json())
 app.use(logger())
+//静态资源
 app.use(require('koa-static')(__dirname + '/public'))
+//页面引擎
 app.use(views(__dirname + '/views', {
   extension: 'ejs'
 }))
+
 // 全局拦截配置CROS，允许跨域访问
 app.use(async (ctx, next) => {
   ctx.set('Access-Control-Allow-Origin', '*');
@@ -32,12 +38,33 @@ app.use(async (ctx, next) => {
 
 // 日志logger
 app.use(async (ctx, next) => {
+  ctx.state.secret = SECRET
   const start = new Date()
-  await next()
+  await next().catch((err) => {
+    console.log('err',err.status)
+    if (401 == err.status) {
+      ctx.status = 401;
+      ctx.body = {
+        code: 1,
+        message: '用户未登录'
+      };
+    } else {
+      throw err;
+    }
+  });
   const ms = new Date() - start
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
+
+
+
+//初始化未登录拦截,排除/open接口，其他进行登录验证
+app.use(koajwt({ SECRET }).unless({
+  path: [/(\/open)|(\/login)|(\/register)/]
+}))
+
 router(app)//导入路由
+
 //监听报错
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)

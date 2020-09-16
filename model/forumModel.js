@@ -1,8 +1,8 @@
 
 const { DataTypes } = require("sequelize"); // 导入内置数据类型
 const BaseModel = require('./baseModel')
-const categoryModel = require('./categoryModel')
-const userModel = require('./userModel')
+const category = require('./categoryModel')
+const user = require('./userModel')
 
 class ForumModel extends BaseModel {
     constructor() {
@@ -12,26 +12,22 @@ class ForumModel extends BaseModel {
             pic: DataTypes.STRING(255),
             content: DataTypes.TEXT(),
             author: DataTypes.STRING(32),
-            browse: DataTypes.INTEGER(10),
-            praise: DataTypes.INTEGER(10),
+            browse: { type: DataTypes.INTEGER(10), defaultValue: 0 },
+            praise: { type: DataTypes.INTEGER(10), defaultValue: 0 },
+            typeId:DataTypes.STRING(50),
+            userId:DataTypes.STRING(50),
             isAudit: {
                 type: DataTypes.INTEGER(1),
-                defaultValue: 1,
-                allowNull: false
+                defaultValue: 1
             },
             isdel: {
                 type: DataTypes.INTEGER(1),
-                defaultValue: 0,
-                allowNull: false
+                defaultValue: 0
             }
-        }, {
-            tableName: 'forum'
-        })
+        }) 
         this.model = super.getModel()
-        this.model.belongsTo(categoryModel['model'], {as:'category', foreignKey:'typeId'})
-        this.model.belongsTo(userModel['model'], {as:'user', foreignKey:'userId'})
-        this.model.sync() //模型同步数据库
-        // this.model.sync({ force: true }) //强制同步，删除表格重建
+        this.model.belongsTo(category['model'], {as:'category', foreignKey:'typeId'})
+        this.model.belongsTo(user['model'], {as:'user', foreignKey:'userId'})
     }
 }
 

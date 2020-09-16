@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const uuId = require('uuid')
 const config = {
     database: 'mydata', // 数据库
     username: 'root', // 用户名
@@ -25,65 +26,63 @@ try {
     console.error('Unable to connect to the database:', error);
 }
 
-module.exports = sequelize;
+//统一表格模型字段,id,createdAt,updatedAt
+exports.defineModel = function (table, attributes) {
+    var attrs = {};
 
+    //统一Id
+    attrs.id = {
+        type: Sequelize.STRING(50),
+        primaryKey: true,
+        allowNull: false,
+        unique: true,
+    };
 
-// exports.defineModel = function (name, attributes) {
-//     var attrs = {};
+    for (let key in attributes) {
+        let val = attributes[key];
+        if (typeof val === 'object' && val['type']) {
+            val.allowNull = val.allowNull || false;
+            attrs[key] = val;
+        } else {
+            attrs[key] = {
+                type: val,
+                allowNull: false
+            };
+        }
+    }
+    attrs.createdAt = {
+        type: Sequelize.BIGINT,
+        allowNull: false
+    };
 
-//     //统一Id
-//     attrs.id = {
-//         type: Sequelize.STRING(50),
-//         primaryKey: true,
-//         allowNull: false,
-//         unique: true,
-//     };
+    attrs.updatedAt = {
+        type: Sequelize.BIGINT,
+        allowNull: false
+    };
 
-//     for (let key in attributes) {
-//         let val = attributes[key];
-//         if (typeof val === 'object' && val['type']) {
-//             val.allowNull = val.allowNull || false;
-//             attrs[key] = val;
-//         } else {
-//             attrs[key] = {
-//                 type: val,
-//                 allowNull: false
-//             };
-//         }
-//     }
-//     attrs.createdAt = {
-//         type: Sequelize.BIGINT,
-//         allowNull: false
-//     };
+    attrs.version = {
+        type: Sequelize.BIGINT
+    }
 
-//     attrs.updatedAt = {
-//         type: Sequelize.BIGINT,
-//         allowNull: false
-//     };
+    return sequelize.define(table, attrs, {
+        tableName: table,
+        timestamps: false,
+        underscored: true,
+        paranoid: true,
+        hooks: {
+            beforeValidate: function (obj) {
+                let now = Date.now();
+                if (obj.isNewRecord) {
+                    obj.id = uuId.v4().replace(/-/g, '');
+                    obj.version = 0;
+                    obj.createdAt = now;
+                    obj.updatedAt = now;
+                } else {
+                    obj.version = obj.version + 1;
+                    obj.updatedAt = Date.now();
+                }
+            }
+        }
+    })
 
-//     attrs.version = {
-//         type: Sequelize.BIGINT
-//     }
-
-//     return sequelize.define(name, attrs, {
-//         tableName: name,
-//         timestamps: true,
-//         underscored: true,
-//         paranoid: true,
-//         hooks: {
-//             beforeValidate: function (obj) {
-//                 let now = Date.now();
-//                 if (obj.isNewRecord) {
-//                     obj.id = uuId.v4().replace(/-/g, '');
-//                     obj.version = 0;
-//                     obj.createdAt = now;
-//                     obj.updatedAt = now;
-//                 } else {
-//                     obj.version = obj.version + 1;
-//                     obj.updatedAt = Date.now();
-//                 }
-//             }
-//         }
-//     })
-
-// }
+}

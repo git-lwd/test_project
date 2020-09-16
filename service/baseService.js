@@ -1,3 +1,4 @@
+
 class BaseService {
     constructor(instance) {
         this.instance = instance
@@ -9,6 +10,10 @@ class BaseService {
 
     BaseFindByPk(id) {
         return this.instance.findByPk(id)
+    }
+
+    BaseFindOne(where) {
+        return this.instance.findOne(where)
     }
 
     BaseFindAll(attributes, where) {

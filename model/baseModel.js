@@ -1,8 +1,10 @@
-const sequelize = require('../common/dbConfig')
+const db = require('../common/dbConfig')
 
 class BaseModel {
     constructor(table, attrs, opts) {
-        this.model = sequelize.define(table, attrs, opts);
+        this.model = db.defineModel(table, attrs, opts);
+        this.model.sync() //模型同步数据库
+        // this.model.sync({ force: true }) //强制同步，删除表格重建
     }
 
     getModel() {
@@ -17,6 +19,11 @@ class BaseModel {
     //主键查询
     findByPk(id) {
         return this.model.findByPk(id)
+    }
+    
+    //条件查询一条
+    findOne(where) {
+        return this.model.findOne({ where })
     }
 
     //查询所有数据
