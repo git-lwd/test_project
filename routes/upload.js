@@ -23,7 +23,7 @@ var storage = multer.diskStorage({
     //文件保存路径
     destination: function (req, file, cb) {
         var date = new Date();
-        let filePath = "D:/upload/img/" + date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+        let filePath = "E:/upload/img/" + date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
         filePath = path.relative(__dirname, filePath);
         checkDirExist(filePath, () => {
             cb(null, filePath)
@@ -44,7 +44,9 @@ router.post('/upload', upload.single('file'), async (ctx, next) => {
     try {
         let url = ctx.req.file.path.split('upload')[1].replace(/\\/g, '/')
         ctx.body = {
-            path: url
+            code:0,
+            path: url,
+            message:'上传成功'
         }
     } catch (error) {
         ctx.throw(500, error)
