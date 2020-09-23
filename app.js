@@ -7,6 +7,7 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const router = require('./routes/router')
 const koajwt = require('koa-jwt')
+const jwt = require('jsonwebtoken')
 const SECRET = 'lwd';
 
 onerror(app)//添加报错监听器
@@ -36,16 +37,28 @@ app.use(async (ctx, next) => {
   }
 });
 
-// 日志logger
 app.use(async (ctx, next) => {
   ctx.state.secret = SECRET
+  let token = ctx.header.authorization
+  if (token == undefined) {
+    await next();
+  } else {
+    //token存在，解析信息
+    let user = jwt.verify(token.split(' ')[1], SECRET)
+    ctx.state.user = user;
+    await next();
+  }
+})
+
+// 日志logger
+app.use(async (ctx, next) => {
   const start = new Date()
   await next().catch((err) => {
-    console.log('err',err.status)
+    console.log('err', err.status)
     if (401 == err.status) {
-      ctx.status = 401;
+      ctx.status = 500
       ctx.body = {
-        code: 1,
+        code: '0001',
         message: '用户未登录'
       };
     } else {

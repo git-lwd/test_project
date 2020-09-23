@@ -39,7 +39,7 @@ var storage = multer.diskStorage({
 //加载配置
 var upload = multer({ storage: storage })
 
-router.post('/upload', upload.single('file'), async (ctx, next) => {
+router.post('/open/upload', upload.single('file'), async (ctx, next) => {
     console.log(ctx)
     try {
         let url = ctx.req.file.path.split('upload')[1].replace(/\\/g, '/')

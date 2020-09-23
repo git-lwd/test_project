@@ -53,7 +53,7 @@ class UserRoutes {
           name: user.name
         };
         console.log('user', userToken)
-        const token = jwt.sign(userToken, ctx.state.secret, { expiresIn: '1h' })  //token签名 有效期为1小时
+        const token = jwt.sign(userToken, ctx.state.secret, { expiresIn: '24h' })  //token签名 有效期为24小时
         ctx.body = {
           code: 0,
           data: { token, user },
@@ -81,8 +81,6 @@ class UserRoutes {
     })
 
     router.get('/open/findById', async (ctx, next) => {
-      // let token = ctx.header.authorization
-      // let payload = jwt.verify(token.split(' ')[1],ctx.state.secret)
       try {
         var data = await userService.BaseFindByPk(ctx.query.id)
         if (data) {
