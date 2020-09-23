@@ -38,7 +38,9 @@ class ForumRoutes {
         })
 
         router.post('/create', async (ctx, next) => {
+            let id = ctx.state.user.id;
             let opts = ctx.request.body;
+            opts.userId = id;
             try {
                 let data = await forumService.BaseCreate(opts)
                 ctx.body = {
