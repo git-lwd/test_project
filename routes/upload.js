@@ -23,7 +23,7 @@ var storage = multer.diskStorage({
     //文件保存路径
     destination: function (req, file, cb) {
         var date = new Date();
-        let filePath = "E:/upload/img/" + date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+        let filePath = "E:/upload/img/" + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
         filePath = path.relative(__dirname, filePath);
         checkDirExist(filePath, () => {
             cb(null, filePath)
@@ -40,18 +40,36 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 
 router.post('/open/upload', upload.single('file'), async (ctx, next) => {
-    console.log(ctx)
     try {
         let url = ctx.req.file.path.split('upload')[1].replace(/\\/g, '/')
         ctx.body = {
-            code:0,
+            code: 0,
             path: url,
-            message:'上传成功'
+            message: '上传成功'
         }
     } catch (error) {
         ctx.throw(500, error)
         next()
     }
 })
+
+
+router.post('/open/ue/upload', upload.fields([{ name: 'files' }]), async (ctx, next) => {
+    try {
+        var files = ctx.req.files.files, arr = [],
+            arr = files.map(item => {
+                return "http://127.0.0.1:8088"+ item.path.split('upload')[1].replace(/\\/g, '/')
+            })
+        ctx.body = {
+            errno: 0,
+            data: arr,
+            message: '上传成功'
+        }
+    } catch (error) {
+        ctx.throw(500, error)
+        next()
+    }
+})
+
 
 module.exports = router
