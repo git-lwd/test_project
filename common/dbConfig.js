@@ -1,9 +1,10 @@
 const Sequelize = require('sequelize');
-const uuId = require('uuid')
+const { DataTypes } = require('sequelize');
+const moment = require('moment')
 const config = {
-    database: 'mydata', // 数据库
+    database: 'swtdata', // 数据库
     username: 'root', // 用户名
-    password: '123456', // 口令
+    password: 'root', // 口令
     host: 'localhost', // 主机名
     port: 3306 // 端口号，MySQL默认3306
 };
@@ -29,15 +30,6 @@ try {
 //统一表格模型字段,id,createdAt,updatedAt
 exports.defineModel = function (table, attributes) {
     var attrs = {};
-
-    //统一Id
-    attrs.id = {
-        type: Sequelize.STRING(50),
-        primaryKey: true,
-        allowNull: false,
-        unique: true,
-    };
-
     for (let key in attributes) {
         let val = attributes[key];
         if (typeof val === 'object' && val['type']) {
@@ -50,18 +42,41 @@ exports.defineModel = function (table, attributes) {
             };
         }
     }
+
+    //统一Id
+    attrs.id = {
+        type: DataTypes.INTEGER(6).ZEROFILL,
+        primaryKey: true,
+        allowNull: false,
+        unique: true,
+        autoIncrement: true
+    };
+
+    attrs.isdel = {
+        type: DataTypes.INTEGER(1),
+        allowNull: false,
+        defaultValue: 0
+    };
+
     attrs.createdAt = {
-        type: Sequelize.BIGINT,
-        allowNull: false
+        type: DataTypes.DATE,
+        allowNull: false,
+        get() {
+            return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss');
+        }
     };
 
     attrs.updatedAt = {
-        type: Sequelize.BIGINT,
-        allowNull: false
+        type: DataTypes.DATE,
+        allowNull: false,
+        get() {
+            return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss');
+        }
     };
 
     attrs.version = {
-        type: Sequelize.BIGINT
+        type: DataTypes.INTEGER(1),
+        defaultValue: 0
     }
 
     return sequelize.define(table, attrs, {
@@ -73,13 +88,11 @@ exports.defineModel = function (table, attributes) {
             beforeValidate: function (obj) {
                 let now = Date.now();
                 if (obj.isNewRecord) {
-                    obj.id = uuId.v4().replace(/-/g, '');
-                    obj.version = 0;
                     obj.createdAt = now;
                     obj.updatedAt = now;
                 } else {
                     obj.version = obj.version + 1;
-                    obj.updatedAt = Date.now();
+                    obj.updatedAt = now;
                 }
             }
         }

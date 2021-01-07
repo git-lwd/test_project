@@ -7,7 +7,7 @@ class ForumRoutes {
         router.get('/open/findAll', async (ctx, next) => {
             let query = ctx.query;
             try {
-                var data = await forumService.BaseFindAndCountAll()
+                var data = await forumService.findForumFilter(query)
                 ctx.body = {
                     code: 0,
                     data,

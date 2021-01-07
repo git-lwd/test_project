@@ -44,9 +44,18 @@ app.use(async (ctx, next) => {
     await next();
   } else {
     //token存在，解析信息
-    let user = jwt.verify(token.split(' ')[1], SECRET)
-    ctx.state.user = user;
+    try {
+      let user = jwt.verify(token.split(' ')[1], SECRET)
+      ctx.state.user = user;
     await next();
+    } catch (error) {
+      ctx.status = 500
+      ctx.body = {
+        code: '0001',
+        message: '用户未登录'
+      };
+      
+    }
   }
 })
 

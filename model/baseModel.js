@@ -3,7 +3,8 @@ const db = require('../common/dbConfig')
 class BaseModel {
     constructor(table, attrs, opts) {
         this.model = db.defineModel(table, attrs, opts);
-        this.model.sync() //模型同步数据库
+        this.model.sync()
+        // this.model.sync({alter: true}) //模型同步数据库
         // this.model.sync({ force: true }) //强制同步，删除表格重建
     }
 
@@ -33,6 +34,8 @@ class BaseModel {
 
     //分页查询
     findAndCountAll(attributes, where, page = 1, pageSize = 10) {
+        page = parseInt(page)
+        pageSize = parseInt(pageSize)
         let offset = (page - 1) * pageSize;
         return attributes ? this.model.findAndCountAll({ attributes, where, offset, limit: pageSize }) : this.model.findAndCountAll({ where, offset, limit: pageSize })
     }

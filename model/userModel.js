@@ -15,13 +15,9 @@ class UserModel extends BaseModel {
                 }
             },
             age: { type: DataTypes.INTEGER(4), allowNull: true },
-            gender: { type: DataTypes.INTEGER(1), allowNull: true },
+            gender: { type: DataTypes.INTEGER(1),defaultValue: 0 },
             birthday: { type: DataTypes.DATEONLY, allowNull: true },
             isSuper: {
-                type: DataTypes.INTEGER(1),
-                defaultValue: 0
-            },
-            isdel: {
                 type: DataTypes.INTEGER(1),
                 defaultValue: 0
             }

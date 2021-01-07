@@ -7,11 +7,7 @@ class CategoryModel extends BaseModel{
         super('category', {
             pic:DataTypes.STRING(255),
             name:DataTypes.STRING(16),
-            parentId:{type:DataTypes.BIGINT(11),allowNull:true},
-            isdel: {
-                type: DataTypes.INTEGER(1),
-                defaultValue: 0
-            }
+            parentId:{type:DataTypes.BIGINT(11),allowNull:true}
         })
         this.model = super.getModel()
     }

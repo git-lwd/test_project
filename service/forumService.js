@@ -6,6 +6,10 @@ class ForumService extends BaseService{
         super(forumModel)
         this.instance = forumModel
     }
+
+    findForumFilter(params){
+        return this.instance.findForumFilterModel(params)
+    }
 }
 
 module.exports = new ForumService()
