@@ -21,7 +21,7 @@ class BaseModel {
     findByPk(id) {
         return this.model.findByPk(id)
     }
-    
+
     //条件查询一条
     findOne(where) {
         return this.model.findOne({ where })
@@ -33,11 +33,14 @@ class BaseModel {
     }
 
     //分页查询
-    findAndCountAll(attributes, where, page = 1, pageSize = 10) {
+    async findAndCountAll(attributes, where, page = 1, pageSize = 10) {
         page = parseInt(page)
         pageSize = parseInt(pageSize)
         let offset = (page - 1) * pageSize;
-        return attributes ? this.model.findAndCountAll({ attributes, where, offset, limit: pageSize }) : this.model.findAndCountAll({ where, offset, limit: pageSize })
+        let data = attributes ? await this.model.findAndCountAll({ attributes, where, offset, limit: pageSize }) : await this.model.findAndCountAll({ where, offset, limit: pageSize })
+        data.totalPage = Math.ceil(data.count / pageSize)
+        data.isLastPage = page == data.totalPage
+        return data;
     }
 
     //更新
