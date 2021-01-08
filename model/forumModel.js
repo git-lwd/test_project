@@ -56,6 +56,8 @@ class ForumModel extends BaseModel {
         }
         return this.findAndCountAll(null, where, params.page, params.pageSize)
     }
+
+    
 }
 
 

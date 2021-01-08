@@ -2,6 +2,7 @@ const router = require('koa-router')()
 const multer = require('koa-multer');
 const path = require('path')
 const fs = require('fs')
+const moment = require('moment')
 
 //递归创建文件目录
 var checkDirExist = (filePath, suc) => {
@@ -23,7 +24,7 @@ var storage = multer.diskStorage({
     //文件保存路径
     destination: function (req, file, cb) {
         var date = new Date();
-        let filePath = "E:/upload/img/" + date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+        let filePath = "E:/upload/img/" + moment(date).format('YYYYMMDD');
         filePath = path.relative(__dirname, filePath);
         checkDirExist(filePath, () => {
             cb(null, filePath)

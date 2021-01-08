@@ -30,6 +30,15 @@ try {
 //统一表格模型字段,id,createdAt,updatedAt
 exports.defineModel = function (table, attributes) {
     var attrs = {};
+    //统一Id
+    attrs.id = {
+        type: DataTypes.INTEGER(6).ZEROFILL,
+        primaryKey: true,
+        allowNull: false,
+        unique: true,
+        autoIncrement: true
+    };
+
     for (let key in attributes) {
         let val = attributes[key];
         if (typeof val === 'object' && val['type']) {
@@ -42,15 +51,6 @@ exports.defineModel = function (table, attributes) {
             };
         }
     }
-
-    //统一Id
-    attrs.id = {
-        type: DataTypes.INTEGER(6).ZEROFILL,
-        primaryKey: true,
-        allowNull: false,
-        unique: true,
-        autoIncrement: true
-    };
 
     attrs.isdel = {
         type: DataTypes.INTEGER(1),
